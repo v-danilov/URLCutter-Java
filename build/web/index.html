@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>URL cutter</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="css/grayscale.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+        <script type="text/javascript">
+
+            function getXmlHttp() {
+
+                var xmlhttp;
+
+                try {
+
+                    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+
+                } catch (e) {
+                    try {
+
+                        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+                    } catch (E) {
+
+                        xmlhttp = false;
+
+                    }
+
+                }
+
+                if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+
+                    xmlhttp = new XMLHttpRequest();
+
+                }
+
+                return xmlhttp;
+
+            }
+
+            function ajaxsub() {
+                var req = getXmlHttp()
+                var text;
+                req.onreadystatechange = function () {
+                    if (req.readyState == 4) {
+                        if (req.status == 200) {
+                            text = req.responseText;
+                            if (text != '1')
+                            {
+                                showAndDismissAlert('success', 'Great! You can now use your short form!');            
+                            }
+                            else
+                            {
+                                 showAndDismissAlert('warning', 'Current key is alredy in use. Try another one.');
+                            }
+                        }
+                        else {
+                            showAndDismissAlert('danger', 'Something goes wrong :(');
+                        }
+                    }
+
+                }
+                var longvalue = encodeURIComponent(document.getElementById("long").value);
+                var shortvalue = encodeURIComponent(document.getElementById("short").value);
+                var params = 'long=' + longvalue + '&short=' + shortvalue;
+                req.open("POST", "Slet", true);
+                req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                req.send(params);
+            }
+
+        </script>
+
+        <script  type="text/javascript">
+
+            function isValidUrl(url) {
+                var regex = new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?");
+
+                if (regex.test(url)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            function CheckFields()
+            {
+                var check = false;
+                long = document.getElementById('long');
+                short = document.getElementById('short');
+                if (long.value != '' && long != undefined)
+                {
+
+                    if (short.value != '' && short != undefined) {
+                        if (isValidUrl(long.value))
+                        {
+                            check = true;
+                        }
+                        else
+                        {
+                            showAndDismissAlert('warning', 'Sorry, your url is wrong!<br> Use next form: "http://www.someurl.com"');
+                        }
+                    }
+
+                    else
+                        //alert('Fill short url form!');
+                        showAndDismissAlert('warning', 'Please, fill the short form');
+
+                }
+                else
+                    showAndDismissAlert('warning', 'Please, fill the long form');
+                // submit должен выполняться только в случае заполнения всех полей
+
+                if (check)
+                {
+                    ajaxsub()
+                }
+                return false;
+            }
+            function showAndDismissAlert(type, message) {
+                var htmlAlert = '<div class="alert alert-' + type + '">' + message + '</div>';
+
+                // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+                $(".alert-messages").prepend(htmlAlert);
+
+                // Since we are prepending, take the first alert and tell it to fade in and then fade out.
+                // Note: if we were appending, then should use last() instead of first()
+                $(".alert-messages .alert").first().hide().fadeIn(200).delay(3000).fadeOut(1000, function () {
+                    $(this).remove();
+                });
+            }
+
+        </script>
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+
+    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand page-scroll" href="#page-top">
+                        <i class="fa fa-play-circle"></i>  <span class="light">URL</span> Cutter
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                    <ul class="nav navbar-nav">
+                        <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                        <li class="hidden">
+                            <a href="#page-top"></a>
+                        </li>
+                        <li>
+                            <a class="page-scroll" href="#act">Cut!</a>
+                        </li>
+                        <li>
+                            <a class="page-scroll" href="#howto">How to</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container -->
+        </nav>
+
+        <!-- Intro Header -->
+        <header class="intro">
+            <div class="intro-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="brand-heading">URL</h1>
+                            <h1 class="brand-heading"><img src = "img/Sc1.png" height="80"> CUTTER <img src = "img/Sc2.png" height="80"></h1>
+                            <p class="intro-text">Want short url instead of something looong?<br>No problem!</p>
+                            <a href="#act" class="btn btn-circle page-scroll">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+
+
+
+        <div class="alert-messages text-center notification">
+        </div>
+        <section id="act" class="container content-section text-center">
+            <div class="col-lg-8 col-lg-offset-2">
+                <form role="form" id = "urlForm" method="POST" action="">
+                    <h1 class="cover-heading">Cut your url!</h1>
+                    <h5>Looong url here:</h5>
+                    <p class="lead"><input class = "bktxt" size = "48" type="text" id ="long" name="long" value=""/></p>
+                    <h5>And short here:</h5>
+                    <p class="lead"><input class = "bktxt" size = "24" type="text" id="short" name="short" value=""/></p>
+                    <input class="btn btn-lg btn-default"  type="button" value="Go!" onclick="CheckFields()" />
+                </form>
+            </div>
+        </section>
+
+
+
+        <!-- Contact Section -->
+        <section id="howto" class="container content-section text-center">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>How to use:</h2>
+                    <p>1) Insert your url into the first field and after that you need to fill the second with short url you want. Then push the button "Go!"</p>
+                    <p>2) After you create a short url use:<a href="mailto:http://localhost:8080/go/"> localhost:8080/go/</a> and your created url
+                    </p>
+                    <p>For example:<a href="mailto:http://localhost:8080/go/g"> localhost:8080/go/g</a></p>
+                    <!--ul class="list-inline banner-social-buttons">
+                        <li>
+                            <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                        </li>
+                        <li>
+                            <a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                        </li>
+                    </ul-->
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <div id="map"></div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container text-center">
+                <p>Copyright &copy; My SuperAwesomeGreat WebSite :) 2015</p>
+            </div>
+        </footer>
+
+        <!-- jQuery -->
+        <script src="js/jquery.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="js/bootstrap.min.js"></script>
+
+        <!-- Plugin JavaScript -->
+        <script src="js/jquery.easing.min.js"></script>
+
+        <!-- Google Maps API Key - Use your own API key to enable the map feature. More information on the Google Maps API can be found at https://developers.google.com/maps/ -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRngKslUGJTlibkQ3FkfTxj3Xss1UlZDA&sensor=false"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="js/grayscale.js"></script>
+
+    </body>
+
+</html>
